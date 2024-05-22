@@ -1,0 +1,102 @@
+﻿import string
+
+
+def read_file(filename):
+    words = []
+    with open(filename) as file:
+        for line in file.readlines():
+            line = line.replace(",", " ").split()
+            for word in line:
+                word = word.strip(string.punctuation)
+                words.append(word)
+    return words
+
+
+def write_to_file(filename, text):
+    with open(filename, "w") as file:
+        file.write(text)
+
+
+def get_unique_words(filename):
+    words = []
+    with open(filename) as file:
+        for line in file.readlines():
+            line = line.replace(",", " ").split()
+            for word in line:
+                word = word.strip(string.punctuation)
+                if word not in words:
+                    words.append(word)
+    return words
+
+
+def get_union_words(filename1, filename2):
+    words1 = get_unique_words(filename1)
+    words2 = get_unique_words(filename2)
+    for word in words2:
+        if word not in words1:
+            words1.append(word)
+    return words1
+
+
+def get_intersection_words(filename1, filename2):
+    words1 = get_unique_words(filename1)
+    words2 = get_unique_words(filename2)
+    common_words = []
+    for word in words1:
+        if word in words2:
+            common_words.append(word)
+    return common_words
+
+
+def get_words_not_in_file(filename1, filename2):
+    words1 = read_file(filename1)
+    words2 = read_file(filename2)
+    not_in_words2 = []
+    for word in words1:
+        if word not in words2:
+            not_in_words2.append(word)
+    return not_in_words2
+
+
+def get_words_freq_table(filename):
+    words = read_file(filename)
+    freq_table = ""
+    freq_table += f"{'Word':<20}{'Count':<5}\n"
+    for word in set(words):
+        freq_table += f"{word:<20}{words.count(word):<5}\n"
+    return freq_table
+
+
+def analyze_files():
+    file1_name = input("Enter the name of the first input file: ")
+    file2_name = input("Enter the name of the second input file: ")
+
+
+    analysis_results = ""
+
+
+    words1 = get_unique_words(file1_name)
+    analysis_results += f"Unique words in file 1: {' '.join(words1)}\n"
+
+
+    words2 = get_unique_words(file2_name)
+    analysis_results += f"Unique words in file 2: {' '.join(words2)}\n"
+
+
+    union_words = get_union_words(file1_name, file2_name)
+    analysis_results += f"Union of the words in files 1 and 2: {' '.join(union_words)}\n"
+
+
+    intersection_words = get_intersection_words(file1_name, file2_name)
+    analysis_results += f"Intersection of the words in files 1 and 2: {' '.join(intersection_words)}\n"
+
+
+    not_in_words2 = get_words_not_in_file(file1_name, file2_name)
+    analysis_results += f"Words in file 1 but not in file 2: {' '.join(not_in_words2)}\n"
+
+
+    not_in_words1 = get_words_not_in_file(file2_name, file1_name)
+    analysis_results += f"Words in file 2 but not in file 1: {' '.join(not_in_words1)}\n"
+
+
+    analysis_results += f"Words in file 1 but not in file 2 and words in file 2 but not in file 1: {' '.join(not_in_words2 + not_in_words1)}\n"
